@@ -1,0 +1,79 @@
+:root {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #c7ccd6;
+  --text-h: #f2f4f8;
+  --muted: #868d9b;
+  --accent: #5b8cff;
+  --accent-bg: rgba(91, 140, 255, 0.14);
+  --good: #46c08a;
+  --good-bg: rgba(70, 192, 138, 0.14);
+  --warn: #e0a23a;
+  --warn-bg: rgba(224, 162, 58, 0.14);
+  --danger: #e2574a;
+
+  --radius: 8px;
+  --sans: 'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont,
+    system-ui, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+
+  font: 15px/1.5 var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0;
+}
+
+input,
+select,
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+button {
+  cursor: pointer;
+  background: var(--surface-2);
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.muted {
+  color: var(--muted);
+}

@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Container Design Preview</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --surface: #171a21;
+        --surface-2: #1e222b;
+        --border: #2a2f3a;
+        --text: #c7ccd6;
+        --text-h: #f2f4f8;
+        --muted: #868d9b;
+        --accent: #5b8cff;
+        --accent-bg: rgba(91, 140, 255, 0.14);
+        --good: #46c08a;
+        --radius: 8px;
+        font: 15px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 22% 0%, rgba(91, 140, 255, 0.08), transparent 34%),
+          linear-gradient(180deg, #10131a 0%, var(--bg) 58%);
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 48px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        color: var(--text-h);
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      .lede {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .seg {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+      }
+
+      .seg button,
+      .viewbar button {
+        min-width: 58px;
+        height: 30px;
+        padding: 0 11px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: var(--muted);
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .seg button.active,
+      .viewbar button.active {
+        color: #fff;
+        border-color: rgba(91, 140, 255, 0.52);
+        background: var(--accent);
+      }
+
+      .preview-shell {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(23, 26, 33, 0.94);
+        padding: 14px;
+      }
+
+      .mock-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .mock-head h2 {
+        color: var(--text-h);
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .mock-head span {
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .legend {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 26px;
+        padding: 3px 8px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .legend-item.active {
+        border-color: var(--border);
+        background: var(--surface-2);
+        color: var(--text-h);
+      }
+
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+
+      .dot.green {
+        background: var(--good);
+      }
+
+      .stage {
+        position: relative;
+        width: 100%;
+        height: min(58vh, 560px);
+        min-height: 420px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background:
+          radial-gradient(circle at 18% 12%, rgba(91, 140, 255, 0.13), transparent 28%),
+          linear-gradient(145deg, #171a21 0%, #11151c 56%, #141821 100%);
+      }
+
+      .preview-canvas {
+        position: absolute;
+        inset: 0;
+      }
+
+      .preview-canvas canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+      }
+
+      .preview-canvas canvas:active {
+        cursor: grabbing;
+      }
+
+      .viewbar {
+        position: absolute;
+        z-index: 3;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid rgba(114, 126, 148, 0.28);
+        border-radius: var(--radius);
+        background: rgba(13, 16, 22, 0.78);
+        backdrop-filter: blur(10px);
+      }
+
+      .viewbar button {
+        min-width: 44px;
+        height: 28px;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .model-card {
+        display: grid;
+        gap: 5px;
+        min-height: 112px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-align: left;
+        color: var(--text);
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .model-card.active,
+      .model-card:hover {
+        border-color: rgba(91, 140, 255, 0.5);
+        background: rgba(91, 140, 255, 0.1);
+      }
+
+      .model-card strong {
+        color: var(--text-h);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .model-card span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(100% - 20px, 1180px);
+          padding-top: 16px;
+        }
+
+        .topbar,
+        .controls {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .stage {
+          min-height: 320px;
+          height: 48vh;
+        }
+
+        .viewbar {
+          left: 10px;
+          right: auto;
+        }
+
+        .model-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div>
+          <h1>Container Design Preview</h1>
+          <p class="lede">Real Three.js preview of selectable cargo-box model styles.</p>
+        </div>
+      </header>
+
+      <div class="controls">
+        <div class="seg" aria-label="Container model style">
+          <button class="active" type="button" data-style="cell">Unit-Cell</button>
+          <button type="button" data-style="lid">Two-Tone</button>
+          <button type="button" data-style="ion">Ion Trace</button>
+          <button type="button" data-style="signal">Signal</button>
+          <button type="button" data-style="wire">Wireframe</button>
+        </div>
+        <div class="seg" aria-label="Preview density">
+          <button class="active" type="button" data-mode="stacked">Stacked</button>
+          <button type="button" data-mode="single">Single</button>
+        </div>
+      </div>
+
+      <section class="preview-shell">
+        <div class="mock-head">
+          <h2 id="activeTitle">Unit-Cell Shell</h2>
+          <span>Argo RAFT · 64 / 192 SCU</span>
+        </div>
+        <div class="legend">
+          <span class="legend-item active"><span class="dot"></span>Mission 1</span>
+          <span class="legend-item"><span class="dot green"></span>Mission 2</span>
+        </div>
+        <div class="stage">
+          <div class="viewbar" aria-label="Cargo view controls">
+            <button class="active" type="button" data-stage-view="iso">Iso</button>
+            <button type="button" data-stage-view="top">Top</button>
+            <button type="button" data-stage-view="side">Side</button>
+          </div>
+          <div class="preview-canvas" data-preview></div>
+        </div>
+
+        <div class="model-grid">
+          <button class="model-card active" type="button" data-style-card="cell">
+            <strong>Unit-Cell Shell</strong>
+            <span>Single flush shell scribed into 1-SCU cells — size is countable, seams align across neighbors, SCU stencilled on the faces instead of floating labels.</span>
+          </button>
+          <button class="model-card" type="button" data-style-card="lid">
+            <strong>Two-Tone Manifest</strong>
+            <span>Graphite body, mission color on the lid and top band only — calm with many missions, saturated where the Top view reads it.</span>
+          </button>
+          <button class="model-card" type="button" data-style-card="ion">
+            <strong>Ion Trace</strong>
+            <span>Glossy near-black crate with energized mission-color linework — glowing cell seams, corner brackets, and SCU stencils. Silhouette-proof on the dark UI.</span>
+          </button>
+          <button class="model-card" type="button" data-style-card="signal">
+            <strong>Mission Signal</strong>
+            <span>Reinforced translucent shell with mission-color frame, inset signal panels, and stripe skin.</span>
+          </button>
+          <button class="model-card" type="button" data-style-card="wire">
+            <strong>Tactical Wireframe</strong>
+            <span>Open-frame cage with visible extents, support bars, corner nodes, and ghost cargo volume.</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/containerDesignPreview.ts"></script>
+  </body>
+</html>
